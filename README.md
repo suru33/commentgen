@@ -2,6 +2,10 @@
 
 Generate consistent length comment
 
+```shell
+cargo install --git https://github.com/suru33/commentgen.git
+```
+
 ```
 $ commentgen -h
 usage: commentgen [options] [COMMENT]
