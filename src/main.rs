@@ -1,4 +1,5 @@
 use std::env;
+use std::process::exit;
 
 use getopts::Options;
 
@@ -7,8 +8,8 @@ use language::CommentSyntax;
 mod language;
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!("usage: {} [options] [COMMENT]", program);
-    print!("{}", opts.usage(&brief));
+    let brief = format!("usage: {program} [options] [COMMENT]");
+    eprint!("{}", opts.usage(&brief));
 }
 
 fn main() {
@@ -23,7 +24,9 @@ fn main() {
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => {
-            panic!("{}", f.to_string())
+            eprintln!("{}", f.to_string());
+            print_usage(&program, opts);
+            exit(1);
         }
     };
 
@@ -38,7 +41,13 @@ fn main() {
 
     let length: usize = match matches.opt_str("length") {
         None => 80,
-        Some(value) => value.parse().expect(&format!("invalid length: {}", value))
+        Some(value) => match value.parse() {
+            Ok(number) => number,
+            Err(_) => {
+                eprintln!("invalid length: {}", value);
+                exit(1);
+            }
+        }
     };
 
     let comment = match matches.free.as_slice() {
@@ -54,10 +63,10 @@ fn get_comment(syntax: CommentSyntax, length: usize, comment: &str) -> String {
     let empty_space_len = syntax.start.len() + syntax.end.len() + 2;
 
     if empty_space_len + comment.len() >= length {
-        format!("{}{}{}", syntax.start, comment, syntax.end)
+        format!("{}{comment}{}", syntax.start, syntax.end)
     } else {
         let comment = format!("{:-^1$}", comment, length - empty_space_len);
-        format!("{} {} {}", syntax.start, comment, syntax.end)
+        format!("{} {comment} {}", syntax.start, syntax.end)
     }
 }
 

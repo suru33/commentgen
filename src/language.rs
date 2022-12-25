@@ -64,7 +64,7 @@ impl CommentSyntax {
 
         return match lang_map.get(language) {
             None => {
-                println!("language `{}` not found, defaults to shell style", language);
+                eprintln!("language `{}` not found, defaults to shell style", language);
                 style_shell
             }
             Some(language) => (*language).clone()
