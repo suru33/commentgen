@@ -9,7 +9,7 @@ mod language;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("usage: {program} [options] [COMMENT]");
-    eprint!("{}", opts.usage(&brief));
+    eprint!("{}\n     ls \t\tList all supported languages\n", opts.usage(&brief));
 }
 
 fn main() {
@@ -34,10 +34,7 @@ fn main() {
         print_usage(&program, opts);
         return;
     }
-    let language = match matches.opt_str("language") {
-        None => String::from("shell"),
-        Some(value) => value
-    };
+    let language = matches.opt_str("language").unwrap_or_else(|| String::from("shell"));
 
     let length: usize = match matches.opt_str("length") {
         None => 80,
@@ -54,6 +51,10 @@ fn main() {
         [x, ..] => x,
         [] => ""
     };
+
+    if comment == "ls" && *&args.len() == 2 {
+        CommentSyntax::get("_");
+    }
 
     print!("{}", get_comment(CommentSyntax::get(&language), length, comment));
 }

@@ -26,6 +26,8 @@ impl CommentSyntax {
         let style_lisp = CommentSyntax::new("#|", "|#");
         let style_pascal = CommentSyntax::new("{", "}");
         let style_jsp = CommentSyntax::new("<%--", "--%>");
+        let style_ocaml = CommentSyntax::new("(*", "*)");
+        let style_assembly = CommentSyntax::new(";", ";");
 
         let lang_map: HashMap<&str, &CommentSyntax> = HashMap::from([
             ("shell", &style_shell),
@@ -36,6 +38,10 @@ impl CommentSyntax {
             ("r", &style_shell),
             ("objective-c", &style_c),
             ("erlang", &style_erlang),
+            ("tex", &style_erlang),
+            ("latex", &style_erlang),
+            ("matlab", &style_erlang),
+            ("ocaml", &style_ocaml),
             ("perl", &style_shell),
             ("ruby", &style_shell),
             ("elixir", &style_shell),
@@ -60,7 +66,16 @@ impl CommentSyntax {
             ("lisp", &style_lisp),
             ("pascal", &style_pascal),
             ("jsp", &style_jsp),
+            ("assembly", &style_assembly),
+            ("obj", &style_assembly),
         ]);
+
+        if language == "_" {
+            for (k, _) in &lang_map {
+                println!("{}", k);
+            }
+            std::process::exit(0);
+        }
 
         return match lang_map.get(language) {
             None => {
